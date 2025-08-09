@@ -334,3 +334,21 @@ footer.footer p {
     font-size: 0.9rem;
     margin-bottom: 10px;
 }
+
+
+/* === PWA Navbar fix: keep Korean words intact and center items === */
+.navbar ul {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.navbar ul li a {
+    display: inline-block;
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+    text-align: center;
+    padding: 8px 15px;
+}
