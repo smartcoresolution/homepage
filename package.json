@@ -1,0 +1,21 @@
+{
+  "name": "scs-hybrid-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hybrid app (Capacitor) wrapping the SCS homepage",
+  "scripts": {
+    "dev": "npx http-server . -p 5173 -c-1 --cors",
+    "build": "echo 'Static site: nothing to build'",
+    "cap:copy": "npx cap copy",
+    "cap:sync": "npx cap sync",
+    "android": "npx cap run android",
+    "ios": "npx cap run ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2",
+    "http-server": "^14.1.1"
+  }
+}

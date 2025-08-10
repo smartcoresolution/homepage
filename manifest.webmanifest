@@ -5,9 +5,8 @@
   "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0f172a",
-  "orientation": "portrait", // 선택: 세로 고정
+  "background_color": "#0b1220",
+  "theme_color": "#2563eb",
   "icons": [
     {
       "src": "assets/logo.png",
