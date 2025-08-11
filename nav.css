@@ -1,0 +1,35 @@
+:root{
+  --nav-bg:#153a57;         /* 딥 블루 배경 */
+  --nav-pill:#1d4b6e;       /* 버튼 배경(투명도 대신 실색) */
+  --nav-text:#ffffff;       /* 텍스트 색 */
+  --nav-border:rgba(255,255,255,.35); /* 테두리 */
+  --nav-hover:#1f5f8d;      /* 호버 색 */
+  --radius:999px;
+}
+.main-nav{ background:var(--nav-bg); padding:10px 12px; }
+.nav-list{ list-style:none; display:flex; gap:10px; margin:0; padding:0; align-items:center; }
+.nav-item{ position:relative; }
+.nav-link{
+  display:inline-block; padding:8px 14px;
+  color:var(--nav-text); text-decoration:none;
+  border:1px solid var(--nav-border); border-radius:var(--radius);
+  background:transparent;
+}
+.nav-link:hover{ background:var(--nav-hover); }
+
+/* 드롭다운 */
+.dropdown:hover > .dropdown-menu{ display:block; }
+.dropdown-menu{
+  display:none; position:absolute; top:42px; left:0; min-width:180px;
+  background:#ffffff; color:#0f172a; border-radius:12px; box-shadow:0 10px 24px rgba(0,0,0,.12);
+  padding:8px; z-index:30;
+}
+.dropdown-menu a{
+  display:block; padding:10px 12px; border-radius:8px; color:#0f172a; text-decoration:none;
+}
+.dropdown-menu a:hover{ background:#f1f5f9; }
+
+/* 반응형 */
+@media (max-width:760px){
+  .nav-list{ flex-wrap:wrap; }
+}
