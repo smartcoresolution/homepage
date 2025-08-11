@@ -1,0 +1,9 @@
+[
+  { "id": 7, "title": "정기 점검 안내 (8/20 02:00~04:00)", "category": "점검", "date": "2025-08-20", "pin": true },
+  { "id": 6, "title": "모바일 앱 v1.2 업데이트", "category": "업데이트", "date": "2025-08-10", "pin": false },
+  { "id": 5, "title": "추석 연휴 고객센터 운영시간", "category": "안내", "date": "2025-09-05", "pin": false },
+  { "id": 4, "title": "개인정보 처리방침 개정 사전 안내", "category": "안내", "date": "2025-07-29", "pin": false },
+  { "id": 3, "title": "개발자 밋업 참여 신청", "category": "행사", "date": "2025-08-28", "pin": false },
+  { "id": 2, "title": "서비스 이용약관 변경 안내", "category": "안내", "date": "2025-07-01", "pin": false },
+  { "id": 1, "title": "신규 회원 웰컴 쿠폰 제공", "category": "행사", "date": "2025-06-20", "pin": false }
+]
