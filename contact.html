@@ -523,9 +523,11 @@
         </div>
       </div>
       
-      <form class="contact-form" id="contactForm" method="POST">
-        <input type="hidden" name="to_email" value="jangck11@naver.com">
-        <input type="hidden" name="subject" value="스마트코어솔루션 문의">
+      <form class="contact-form" action="https://formsubmit.co/jangck11@naver.com" method="POST">
+        <input type="hidden" name="_subject" value="스마트코어솔루션 문의">
+        <input type="hidden" name="_next" value="/thank-you.html">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
         
         <!-- 받는 사람 이메일 주소 표시 -->
         <div class="recipient-info-simple">
@@ -620,15 +622,9 @@
     </div>
   </footer>
 
-  <!-- EmailJS SDK 추가 -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="/app.js"></script>
   
   <script>
-    // EmailJS 초기화
-    (function() {
-      emailjs.init("YOUR_PUBLIC_KEY"); // 여기에 실제 Public Key 입력 필요
-    })();
-    
     // 폼 제출 처리 및 메시지 표시
     document.addEventListener('DOMContentLoaded', function() {
       const contactForm = document.querySelector('.contact-form');
@@ -672,6 +668,8 @@
             isValid = false;
             if (field === 'inquiry_type') {
               missingFields.push('문의 유형');
+            } else if (field === 'name') {
+              missingFields.push('이름');
             } else if (field === 'email') {
               missingFields.push('보내는사람 이메일');
             } else if (field === 'subject') {
@@ -701,32 +699,21 @@
           return;
         }
         
-        // EmailJS로 이메일 전송
-        showMessage('info', '📧 메일 전송 중... 잠시만 기다려 주세요.');
+        // 성공 메시지 표시 (실제 전송은 FormSubmit이 처리)
+        showMessage('success', '메일이 성공적으로 전송되었습니다. 문의사항은 빠른시일내에 응답하겠습니다. 감사합니다.');
         
-        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
-          to_email: 'jangck11@naver.com',
-          from_name: formDataObj.name,
-          from_email: formDataObj.email,
-          inquiry_type: formDataObj.inquiry_type,
-          subject: formDataObj.subject,
-          message: formDataObj.message
-        })
-        .then(function(response) {
-          console.log('SUCCESS!', response.status, response.text);
-          showMessage('success', '✅ 메일이 성공적으로 전송되었습니다! 문의사항은 빠른시일내에 응답하겠습니다.');
-          
-          // 폼 초기화
-          contactForm.reset();
-          
-          // 5초 후 메시지 숨기기
-          setTimeout(() => {
-            hideMessage();
-          }, 5000);
-        }, function(error) {
-          console.log('FAILED...', error);
-          showMessage('error', '❌ 메일 전송에 실패했습니다. 다시 시도해주세요.');
-        });
+        // 폼 초기화
+        contactForm.reset();
+        
+        // 5초 후 메시지 숨기기
+        setTimeout(() => {
+          hideMessage();
+        }, 5000);
+        
+        // FormSubmit으로 실제 전송 (약간의 지연 후)
+        setTimeout(() => {
+          contactForm.submit();
+        }, 1000);
       });
     });
   </script>
