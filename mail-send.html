@@ -454,12 +454,10 @@
       </ul>
     </div>
 
-         <form id="mailForm" action="https://formsubmit.co/jangck11@naver.com" method="POST" enctype="multipart/form-data">
-       <!-- FormSubmit 설정 -->
-       <input type="hidden" name="_subject" value="[문의] 스마트코아솔루션 홈페이지">
-       <input type="hidden" name="_next" value="/thank-you.html">
-       <input type="hidden" name="_captcha" value="false">
-       <input type="hidden" name="_template" value="table">
+                                       <form id="mailForm" method="POST">
+         <!-- EmailJS 설정 -->
+         <input type="hidden" name="to_email" value="jangck11@naver.com">
+         <input type="hidden" name="subject" value="[문의] 스마트코아솔루션 홈페이지">
       
       <div class="field">
         <label class="field-label">이름 *</label>
