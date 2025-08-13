@@ -94,8 +94,8 @@ homepage_test/
 - **관리자 인증**: 세션 기반 인증 시스템
 
 ### 관리자 계정
-- **ID**: `admin`
-- **Password**: `admin123`
+- **ID**: ``
+- **Password**: ``
 
 ### 데이터 구조
 ```javascript
@@ -257,3 +257,4 @@ firebase deploy
 ---
 
 **SmartCore Solution** - AI 기반 혁신적인 SaaS 솔루션으로 더 나은 미래를 만들어갑니다.
+
