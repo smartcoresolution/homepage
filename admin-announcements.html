@@ -10,6 +10,40 @@
   <link rel="icon" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <link rel="stylesheet" href="/styles.css">
+  
+  <!-- Firebase SDK 추가 -->
+  <script type="module">
+    // Firebase 설정 (여기에 본인의 firebaseConfig 정보를 넣어주세요)
+    const firebaseConfig = {
+      apiKey: "YAIzaSyAvv3evd-7vc6f7pPmD6mEFlEkbe_1FeC",
+      authDomain: "smartcore-announcements.firebaseapp.com",
+      projectId: "smartcore-announcements",
+      storageBucket: "smartcore-announcements.firebasestorage.app",
+      messagingSenderId: "221896203183",
+      appId: "1:221896203183:web:320176ba4c1bf52f892d5a"
+    };
+
+    // Firebase 초기화
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, orderBy, query, serverTimestamp, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 전역 변수로 Firebase 인스턴스 제공
+    window.db = db;
+    window.collection = collection;
+    window.addDoc = addDoc;
+    window.getDocs = getDocs;
+    window.deleteDoc = deleteDoc;
+    window.updateDoc = updateDoc;
+    window.doc = doc;
+    window.getDoc = getDoc;
+    window.orderBy = orderBy;
+    window.query = query;
+    window.serverTimestamp = serverTimestamp;
+  </script>
+  
   <style>
     body {
       background: #f8f9fa;
@@ -485,7 +519,6 @@
       <div class="nav-title">공지사항 관리</div>
       <div class="nav-actions">
         <button onclick="logout()" class="logout-button">로그아웃</button>
-        <a href="/" class="nav-back">← 메인으로 돌아가기</a>
       </div>
     </div>
   </div>
@@ -498,8 +531,8 @@
     
     <div class="admin-nav">
       <div class="admin-nav-tabs">
-        <button class="admin-nav-tab active" onclick="showTab('register')">📝 공지사항 등록</button>
-        <button class="admin-nav-tab" onclick="showTab('manage')">📋 공지사항 관리</button>
+        <button class="admin-nav-tab active" onclick="showTab('register', event)">📝 공지사항 등록</button>
+        <button class="admin-nav-tab" onclick="showTab('manage', event)">📋 공지사항 관리</button>
       </div>
     </div>
     
@@ -698,7 +731,7 @@
     }
     
     // 탭 전환
-    function showTab(tabName) {
+    function showTab(tabName, event) {
       // 모든 탭 비활성화
       document.querySelectorAll('.admin-nav-tab').forEach(tab => {
         tab.classList.remove('active');
@@ -707,8 +740,10 @@
         section.classList.remove('active');
       });
       
-      // 선택된 탭 활성화
-      event.target.classList.add('active');
+      // 선택된 탭 활성화 (event가 있을 때만)
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
       document.getElementById(tabName + 'Section').classList.add('active');
       
       // 관리 탭일 때 목록 새로고침
@@ -717,8 +752,8 @@
       }
     }
     
-    // 공지사항 저장
-    function saveAnnouncement() {
+    // 공지사항 저장 (Firebase)
+    async function saveAnnouncement() {
       const form = document.getElementById('announcementForm');
       const formData = new FormData(form);
       
@@ -728,34 +763,34 @@
         return;
       }
       
-      // 새 공지사항 생성
-      const newAnnouncement = {
-        id: 'announcement-' + Date.now(),
-        title: formData.get('title'),
-        content: formData.get('content'),
-        priority: formData.get('priority') || 'normal',
-        date: formData.get('date') || new Date().toISOString().split('T')[0],
-        tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag) : [],
-        files: []
-      };
-      
-      // 로컬 스토리지에서 기존 공지사항 로드
-      let announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
-      
-      // 새 공지사항을 맨 앞에 추가
-      announcements.unshift(newAnnouncement);
-      
-      // 로컬 스토리지에 저장
-      localStorage.setItem('announcements', JSON.stringify(announcements));
-      
-      // 성공 메시지
-      alert('공지사항이 성공적으로 등록되었습니다!');
-      
-      // 폼 초기화
-      resetForm();
-      
-      // 관리 탭으로 이동
-      showTab('manage');
+      try {
+        // 새 공지사항 생성
+        const newAnnouncement = {
+          title: formData.get('title'),
+          content: formData.get('content'),
+          priority: formData.get('priority') || 'normal',
+          date: formData.get('date') || new Date().toISOString().split('T')[0],
+          tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
+        
+        // Firebase에 저장
+        const docRef = await addDoc(collection(db, "announcements"), newAnnouncement);
+        
+        // 성공 메시지
+        alert('공지사항이 Firebase에 성공적으로 저장되었습니다!');
+        
+        // 폼 초기화
+        resetForm();
+        
+        // 관리 탭으로 이동
+        showTab('manage', null);
+        
+      } catch (error) {
+        console.error("Firebase 저장 실패:", error);
+        alert('저장 중 오류가 발생했습니다: ' + error.message);
+      }
     }
     
     // 폼 초기화
@@ -765,62 +800,95 @@
       document.querySelector('.file-info').textContent = '선택된 파일 없음';
     }
     
-    // 공지사항 목록 로드
-    function loadAnnouncementsList() {
+    // 공지사항 목록 로드 (Firebase)
+    async function loadAnnouncementsList() {
       const container = document.getElementById('announcementsList');
-      const announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
       
-      if (announcements.length === 0) {
-        container.innerHTML = `
-          <div class="no-announcements">
-            <p>등록된 공지사항이 없습니다.</p>
-          </div>
-        `;
-        return;
-      }
-      
-      container.innerHTML = announcements.map(announcement => `
-        <div class="announcement-item">
-          <div class="announcement-info">
-            <div class="announcement-title">${announcement.title}</div>
-            <div class="announcement-meta">
-              <span>우선순위: ${getPriorityText(announcement.priority)}</span>
-              <span>날짜: ${formatDate(announcement.date)}</span>
-              <span>태그: ${announcement.tags.join(', ') || '없음'}</span>
+      try {
+        // Firebase에서 공지사항 목록 가져오기
+        const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        
+        if (querySnapshot.empty) {
+          container.innerHTML = `
+            <div class="no-announcements">
+              <p>등록된 공지사항이 없습니다.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        const announcements = [];
+        querySnapshot.forEach((doc) => {
+          announcements.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+        
+        container.innerHTML = announcements.map(announcement => `
+          <div class="announcement-item">
+            <div class="announcement-info">
+              <div class="announcement-title">${announcement.title}</div>
+              <div class="announcement-meta">
+                <span>우선순위: ${getPriorityText(announcement.priority)}</span>
+                <span>날짜: ${formatDate(announcement.date)}</span>
+                <span>태그: ${announcement.tags.join(', ') || '없음'}</span>
+              </div>
+            </div>
+            <div class="announcement-actions">
+              <button class="action-btn edit-btn" onclick="editAnnouncement('${announcement.id}')">수정</button>
+              <button class="action-btn delete-btn" onclick="deleteAnnouncement('${announcement.id}')">삭제</button>
             </div>
           </div>
-          <div class="announcement-actions">
-            <button class="action-btn edit-btn" onclick="editAnnouncement('${announcement.id}')">수정</button>
-            <button class="action-btn delete-btn" onclick="deleteAnnouncement('${announcement.id}')">삭제</button>
+        `).join('');
+        
+      } catch (error) {
+        console.error("Firebase 목록 로드 실패:", error);
+        container.innerHTML = `
+          <div class="no-announcements">
+            <p>목록을 불러오는 중 오류가 발생했습니다: ${error.message}</p>
           </div>
-        </div>
-      `).join('');
-    }
-    
-    // 공지사항 수정
-    function editAnnouncement(id) {
-      const announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
-      const announcement = announcements.find(a => a.id === id);
-      
-      if (announcement) {
-        // 등록 탭으로 이동
-        showTab('register');
-        
-        // 폼에 데이터 채우기
-        document.getElementById('announcementTitle').value = announcement.title;
-        document.getElementById('announcementContent').value = announcement.content;
-        document.getElementById('announcementPriority').value = announcement.priority;
-        document.getElementById('announcementDate').value = announcement.date;
-        document.getElementById('announcementTags').value = announcement.tags.join(', ');
-        
-        // 수정 모드로 변경
-        document.querySelector('.submit-button').textContent = '수정';
-        document.querySelector('.submit-button').onclick = () => updateAnnouncement(id);
+        `;
       }
     }
     
-    // 공지사항 업데이트
-    function updateAnnouncement(id) {
+    // 공지사항 수정 (Firebase)
+    async function editAnnouncement(id) {
+      try {
+        // Firebase에서 해당 공지사항 가져오기
+        const docRef = doc(db, "announcements", id);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          const announcement = docSnap.data();
+          
+          // 등록 탭으로 이동
+          showTab('register', null);
+          
+          // 폼에 데이터 채우기
+          document.getElementById('announcementTitle').value = announcement.title;
+          document.getElementById('announcementContent').value = announcement.content;
+          document.getElementById('announcementPriority').value = announcement.priority;
+          document.getElementById('announcementDate').value = announcement.date;
+          document.getElementById('announcementTags').value = announcement.tags.join(', ');
+          
+          // 수정 모드로 변경
+          document.querySelector('.submit-button').textContent = '수정';
+          document.querySelector('.submit-button').onclick = () => updateAnnouncement(id);
+          
+        } else {
+          alert('해당 공지사항을 찾을 수 없습니다.');
+        }
+        
+      } catch (error) {
+        console.error("Firebase 수정 모드 로드 실패:", error);
+        alert('수정 모드 로드 중 오류가 발생했습니다: ' + error.message);
+      }
+    }
+    
+    // 공지사항 업데이트 (Firebase)
+    async function updateAnnouncement(id) {
       const form = document.getElementById('announcementForm');
       const formData = new FormData(form);
       
@@ -830,26 +898,20 @@
         return;
       }
       
-      // 기존 공지사항 목록 로드
-      let announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
-      const index = announcements.findIndex(a => a.id === id);
-      
-      if (index !== -1) {
-        // 공지사항 업데이트
-        announcements[index] = {
-          ...announcements[index],
+      try {
+        // Firebase에서 공지사항 업데이트
+        const docRef = doc(db, "announcements", id);
+        await updateDoc(docRef, {
           title: formData.get('title'),
           content: formData.get('content'),
           priority: formData.get('priority') || 'normal',
           date: formData.get('date') || new Date().toISOString().split('T')[0],
-          tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag) : []
-        };
-        
-        // 로컬 스토리지에 저장
-        localStorage.setItem('announcements', JSON.stringify(announcements));
+          tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+          updatedAt: serverTimestamp()
+        });
         
         // 성공 메시지
-        alert('공지사항이 성공적으로 수정되었습니다!');
+        alert('공지사항이 Firebase에 성공적으로 수정되었습니다!');
         
         // 폼 초기화 및 등록 모드로 복귀
         resetForm();
@@ -857,20 +919,28 @@
         document.querySelector('.submit-button').onclick = saveAnnouncement;
         
         // 관리 탭으로 이동
-        showTab('manage');
+        showTab('manage', null);
+        
+      } catch (error) {
+        console.error("Firebase 업데이트 실패:", error);
+        alert('수정 중 오류가 발생했습니다: ' + error.message);
       }
     }
     
-    // 공지사항 삭제
-    function deleteAnnouncement(id) {
+    // 공지사항 삭제 (Firebase)
+    async function deleteAnnouncement(id) {
       if (confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
-        let announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
-        announcements = announcements.filter(a => a.id !== id);
-        
-        localStorage.setItem('announcements', JSON.stringify(announcements));
-        
-        alert('공지사항이 삭제되었습니다.');
-        loadAnnouncementsList();
+        try {
+          // Firebase에서 공지사항 삭제
+          await deleteDoc(doc(db, "announcements", id));
+          
+          alert('공지사항이 Firebase에서 삭제되었습니다.');
+          loadAnnouncementsList();
+          
+        } catch (error) {
+          console.error("Firebase 삭제 실패:", error);
+          alert('삭제 중 오류가 발생했습니다: ' + error.message);
+        }
       }
     }
     

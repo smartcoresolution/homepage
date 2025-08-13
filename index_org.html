@@ -25,23 +25,26 @@
         <div class="title">SmartCoreSolution, Inc.</div>
       </div>
       <div class="menu">
-        <a href="#about">회사개요</a>
-        <a href="/admin-announcements.html">공지사항등록</a>
-        <div class="dropdown" id="svcDropdown">
-          <button class="dropbtn" aria-haspopup="true" aria-expanded="false" aria-controls="svcSubmenu">
-            서비스 <span class="caret" aria-hidden="true">▼</span>
-          </button>
-          <div class="dropdown-content" id="svcSubmenu" role="menu">
-            <a role="menuitem" href="/healthcare.html"><strong>서비스 전체 보기</strong></a>
-            <div style="height:1px;background:#e5eaf3;margin:4px 0;"></div>
-            <a role="menuitem" href="/healthcare-diagnosis.html">정신 건강·인지 기능 진단</a>
-            <a role="menuitem" href="/healthcare-emr.html">의료 기록 자동화</a>
-            <a role="menuitem" href="/healthcare-rehab.html">재활 치료·의료 통역</a>
-          </div>
-        </div>
-        <a href="/manufacturing.html">스마트제조</a>
-        <a href="/contact.html">문의</a>
-      </div>
+  <a href="#about">회사개요</a>
+  <a href="/admin-announcements.html">공지사항등록</a>
+
+  <!-- 드롭다운: 서비스 (상위 페이지 + 하위 페이지) -->
+  <div class="dropdown" id="svcDropdown">
+    <button class="dropbtn" aria-haspopup="true" aria-expanded="false" aria-controls="svcSubmenu">
+      서비스 <span class="caret" aria-hidden="true">▼</span>
+    </button>
+    <div class="dropdown-content" id="svcSubmenu" role="menu">
+      <a role="menuitem" href="/healthcare.html"><strong>서비스 전체 보기</strong></a>
+      <div style="height:1px;background:#e5eaf3;margin:4px 0;"></div>
+      <a role="menuitem" href="/healthcare-diagnosis.html">정신 건강·인지 기능 진단</a>
+      <a role="menuitem" href="/healthcare-emr.html">의료 기록 자동화</a>
+      <a role="menuitem" href="/healthcare-rehab.html">재활 치료·의료 통역</a>
+    </div>
+  </div>
+
+  <a href="/manufacturing.html">스마트제조</a>
+  <a href="/contact.html">문의</a>
+</div>
     </div>
   </nav>
 
@@ -50,8 +53,10 @@
       <div>
         <h1 id="hero-title">음성인식 기반 <br>헬스케어 & 스마트제조 SaaS</h1>
         <p>AI 음성·언어 분석을 통해 의료 진단, 의료기록 자동화, 재활·통역을 지원하고, 제조현장의 생산·품질·안전 관리를 디지털 전환합니다.</p>
+
         <div class="cta">
           <button id="installBtn" class="button" style="display:none" onclick="installPWA()" aria-label="PWA 앱으로 설치">앱으로 설치</button>
+          <a class="button ghost" href="https://www.smartcoresolution.com" target="_blank" rel="noopener" aria-label="공식 웹사이트로 이동">공식 웹사이트</a>
         </div>
         <div class="notice" role="note" aria-label="설치 안내">※ Chrome/Edge/Android에서 "앱으로 설치" 버튼이 표시됩니다.</div>
       </div>
@@ -108,11 +113,18 @@
     </div>
   </section>
 
+  <!-- 공지사항 섹션 추가 -->
   <section id="announcements" class="section container">
     <h2>📢 공지사항</h2>
-    <div class="announcements-container" id="announcementsList">
-      <!-- 공지사항이 동적으로 로드됩니다 -->
-    </div>
+            <div class="announcements-container" id="announcementsList">
+          <!-- 최신 공지사항 -->
+          <!-- 공지사항이 동적으로 로드됩니다 -->
+          <!-- 기본 공지사항이 표시됩니다 -->
+        </div>
+    
+
+    
+
   </section>
 
   <footer class="footer">
@@ -123,6 +135,7 @@
 
   <script src="/app.js"></script>
   
+  <!-- 공지사항 모달 -->
   <div id="announcementModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -133,10 +146,12 @@
         <div id="modalFiles" class="modal-files"></div>
         <div id="modalTags" class="modal-tags"></div>
       </div>
+
     </div>
   </div>
   
   <style>
+    /* 서비스 제목 링크 스타일 */
     .service-title-link {
       color: inherit;
       text-decoration: none;
@@ -145,22 +160,29 @@
       width: 100%;
       height: 100%;
     }
+    
     .service-title-link:hover {
       color: #6ec7ff;
       transform: translateY(-1px);
     }
+    
     .card h3 {
       margin: 0 0 12px 0;
       cursor: pointer;
     }
+    
     .card h3:hover {
       transform: translateY(-1px);
     }
+    
+    /* 라이트 테마에서 링크 색상 조정 */
     @media (prefers-color-scheme: light) {
       .service-title-link:hover {
         color: #0a4fb3;
       }
     }
+    
+    /* 공지사항 없음 스타일 */
     .no-announcements {
       text-align: center;
       color: #6b7280;
@@ -170,14 +192,17 @@
       border-radius: 8px;
       border: 1px dashed #d1d5db;
     }
-
   </style>
   
   <script>
     // ===== 공지사항 동적 로드 및 모달 기능 =====
+    
+    // 페이지 로드 시 공지사항 표시
     document.addEventListener('DOMContentLoaded', function() {
       loadAnnouncements();
     });
+    
+    // 기본 공지사항 데이터
     const defaultAnnouncements = [
       {
         id: 'default-1',
@@ -204,12 +229,29 @@
         tags: ['문의', '상담', '고객지원']
       }
     ];
+    
+    // 공지사항 로드 함수
     function loadAnnouncements() {
       const announcementsList = document.getElementById('announcementsList');
-      if (!announcementsList) return;
+      if (!announcementsList) {
+        console.log('announcementsList 요소를 찾을 수 없습니다.');
+        return;
+      }
+      
+      // localStorage에서 공지사항 가져오기
       let announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
-      if (announcements.length === 0) announcements = defaultAnnouncements;
+      console.log('로드된 공지사항:', announcements);
+      
+      // localStorage에 공지사항이 없으면 기본 공지사항 사용
+      if (announcements.length === 0) {
+        announcements = defaultAnnouncements;
+        console.log('기본 공지사항 사용');
+      }
+      
+      // 최신 순서로 정렬 (날짜 기준 내림차순)
       announcements.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      // 공지사항 HTML 생성
       const announcementsHTML = announcements.map((announcement, index) => `
         <div class="announcement-card ${announcement.priority === 'high' ? 'priority-high' : ''}" onclick="showAnnouncementModal(${index})">
           <div class="announcement-header">
@@ -223,20 +265,31 @@
           </div>
         </div>
       `).join('');
+      
       announcementsList.innerHTML = announcementsHTML;
     }
+    
+
+    
+    // 공지사항 모달 표시
     function showAnnouncementModal(index) {
+      // localStorage에서 공지사항 가져오기
       const announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
       const data = announcements[index];
+      
       if (!data) return;
+      
       const modal = document.getElementById('announcementModal');
       const modalTitle = document.getElementById('modalTitle');
       const modalContent = document.getElementById('modalContent');
       const modalFiles = document.getElementById('modalFiles');
       const modalTags = document.getElementById('modalTags');
+      
       if (modal && modalTitle && modalContent && modalFiles && modalTags) {
         modalTitle.textContent = data.title;
         modalContent.innerHTML = `<p>${data.content.replace(/\n/g, '</p><p>')}</p>`;
+        
+        // 파일 목록
         if (data.files && data.files.length > 0) {
           modalFiles.innerHTML = `
             <h4>첨부파일 (${data.files.length}개)</h4>
@@ -252,6 +305,8 @@
         } else {
           modalFiles.innerHTML = '';
         }
+        
+        // 태그 목록
         if (data.tags && data.tags.length > 0) {
           modalTags.innerHTML = `
             <h4>태그</h4>
@@ -264,16 +319,25 @@
         } else {
           modalTags.innerHTML = '';
         }
+        
         modal.style.display = 'block';
       }
     }
+    
+    // 모달 닫기
     function closeModal() {
       const modal = document.getElementById('announcementModal');
-      if (modal) modal.style.display = 'none';
+      if (modal) {
+        modal.style.display = 'none';
+      }
     }
+    
+    // 파일 다운로드 시뮬레이션
     function downloadFile(filename, size) {
       alert(`파일 "${filename}" 다운로드가 시작됩니다.\n\n실제 구현에서는 서버에서 파일을 제공합니다.`);
     }
+    
+    // 파일 크기 포맷팅
     function formatFileSize(bytes) {
       if (bytes === 0) return '0 Bytes';
       const k = 1024;
@@ -281,12 +345,20 @@
       const i = Math.floor(Math.log(bytes) / Math.log(k));
       return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
+    
+    // 모달 외부 클릭 시 닫기
     window.addEventListener('click', function(event) {
       const modal = document.getElementById('announcementModal');
-      if (event.target === modal) closeModal();
+      if (event.target === modal) {
+        closeModal();
+      }
     });
+    
+    // ESC 키로 모달 닫기
     document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') closeModal();
+      if (event.key === 'Escape') {
+        closeModal();
+      }
     });
   </script>
 </body>
