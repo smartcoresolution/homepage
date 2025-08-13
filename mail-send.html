@@ -454,11 +454,12 @@
       </ul>
     </div>
 
-                                                                                                                                                               <form id="mailForm" action="https://formsubmit.co/jangck33@naver.com" method="POST">
-         <!-- FormSubmit 설정 -->
+                                                                                                                                                                                                                                                                                                                               <form id="mailForm" name="mail" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+         <!-- Netlify Forms 설정 -->
+         <input type="hidden" name="form-name" value="mail">
+         <input type="hidden" name="bot-field">
          <input type="hidden" name="_subject" value="[문의] 스마트코아솔루션 홈페이지">
          <input type="hidden" name="_next" value="/thank-you.html">
-         <input type="hidden" name="_captcha" value="false">
       
       <div class="field">
         <label class="field-label">이름 *</label>
