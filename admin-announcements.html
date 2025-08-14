@@ -25,12 +25,12 @@
 
     // Firebase 초기화
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, orderBy, query, serverTimestamp, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, orderBy, query, serverTimestamp, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+ 
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // 전역 변수로 Firebase 인스턴스 제공
+         const app = initializeApp(firebaseConfig);
+     const db = getFirestore(app);
+         // 전역 변수로 Firebase 인스턴스 제공
     window.db = db;
     window.collection = collection;
     window.addDoc = addDoc;
@@ -185,19 +185,43 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 8px 0;
+      padding: 16px;
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+      background: #f8f9fa;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      min-height: 60px;
+    }
+    
+    .file-upload-container:hover {
+      border-color: #4a9eff;
+      background: #f0f8ff;
+      box-shadow: 0 2px 8px rgba(74, 158, 255, 0.1);
+    }
+    
+    .file-upload-container::before {
+      content: '📁';
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      opacity: 0.6;
     }
     
     .file-select-btn {
-      background: #f8f9fa;
-      color: #495057;
-      border: 2px solid #dee2e6;
+      background: #4a9eff;
+      color: white;
+      border: none;
       border-radius: 6px;
       padding: 10px 20px;
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
+      margin-left: 40px;
     }
     
     .file-select-btn:hover {
@@ -208,6 +232,8 @@
     .file-info {
       color: #6c757d;
       font-size: 14px;
+      margin-left: 12px;
+      flex: 1;
     }
     
     /* 폼 액션 */
@@ -575,13 +601,13 @@
             <div class="file-upload-container">
               <input type="file" id="announcementFiles" name="files" multiple style="display: none;">
               <button type="button" class="file-select-btn" onclick="document.getElementById('announcementFiles').click()">파일 선택</button>
-              <span class="file-info">선택된 파일 없음</span>
+              <span class="file-info">파일을 클릭하거나 드래그하여 선택하세요</span>
             </div>
-            <small>여러 파일을 선택할 수 있습니다</small>
+            <small>여러 파일을 선택할 수 있습니다 • 드래그 앤 드롭도 지원합니다</small>
           </div>
           
           <div class="form-actions">
-            <button type="button" class="submit-button" onclick="saveAnnouncement()">저장</button>
+            <button type="button" class="submit-button" onclick="saveAnnouncements()">저장</button>
             <button type="button" class="cancel-button" onclick="resetForm()">초기화</button>
           </div>
         </form>
@@ -714,24 +740,207 @@
       document.getElementById('announcementDate').value = new Date().toISOString().split('T')[0];
       
       // 파일 선택 이벤트 리스너 추가
-      const fileInput = document.getElementById('announcementsFiles');
+      const fileInput = document.getElementById('announcementFiles');
       const fileInfo = document.querySelector('.file-info');
+      const fileUploadContainer = document.querySelector('.file-upload-container');
       
-      fileInput.addEventListener('change', function() {
-        if (this.files.length > 0) {
-          const fileNames = Array.from(this.files).map(file => file.name).join(', ');
-          fileInfo.textContent = `선택된 파일: ${fileNames}`;
-        } else {
-          fileInfo.textContent = '선택된 파일 없음';
-        }
-      });
+      if (fileInput && fileInfo) {
+        fileInput.addEventListener('change', function() {
+          console.log('파일 선택됨:', this.files.length, '개 파일');
+          updateFileInfo(this.files, fileInfo);
+        });
+      }
+      
+      // 드래그 앤 드롭 기능 추가
+      if (fileUploadContainer) {
+        // 클릭 이벤트 추가 (백업)
+        fileUploadContainer.addEventListener('click', function(e) {
+          if (e.target !== fileInput && e.target.tagName !== 'BUTTON') {
+            console.log('파일 업로드 컨테이너 클릭됨');
+            fileInput.click();
+          }
+        });
+        
+        fileUploadContainer.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          this.style.borderColor = '#4a9eff';
+          this.style.backgroundColor = '#f0f8ff';
+        });
+        
+        fileUploadContainer.addEventListener('dragleave', function(e) {
+          e.preventDefault();
+          this.style.borderColor = '#dee2e6';
+          this.style.backgroundColor = 'transparent';
+        });
+        
+        fileUploadContainer.addEventListener('drop', function(e) {
+          e.preventDefault();
+          this.style.borderColor = '#dee2e6';
+          this.style.backgroundColor = 'transparent';
+          
+          if (fileInput && e.dataTransfer.files.length > 0) {
+            console.log('드래그 앤 드롭으로 파일 선택됨:', e.dataTransfer.files.length, '개');
+            fileInput.files = e.dataTransfer.files;
+            updateFileInfo(e.dataTransfer.files, fileInfo);
+          }
+        });
+      }
       
       // 공지사항 목록 로드
       loadAnnouncementsList();
     }
     
+    // 파일 정보 업데이트 함수
+    function updateFileInfo(files, fileInfoElement) {
+      console.log('updateFileInfo 호출됨:', files, fileInfoElement);
+      if (files && files.length > 0) {
+        const fileNames = Array.from(files).map(file => file.name).join(', ');
+        const totalSize = Array.from(files).reduce((total, file) => total + file.size, 0);
+        fileInfoElement.textContent = `선택된 파일: ${fileNames} (총 ${formatFileSize(totalSize)})`;
+        console.log('파일 정보 업데이트 완료:', fileNames, formatFileSize(totalSize));
+      } else {
+        fileInfoElement.textContent = '선택된 파일 없음';
+        console.log('파일이 선택되지 않음');
+      }
+    }
+    
+    // 파일 크기 포맷팅 함수
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    // 파일을 Base64로 변환하는 함수
+    function convertFileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        console.log('Base64 변환 시작:', file.name, '크기:', file.size, '타입:', file.type);
+        
+        // 파일 크기 및 타입 검증
+        if (!file || file.size === 0) {
+          reject(new Error('빈 파일입니다.'));
+          return;
+        }
+        
+        if (file.size > 500 * 1024) {
+          reject(new Error(`파일 크기가 너무 큽니다: ${formatFileSize(file.size)} (최대 500KB)`));
+          return;
+        }
+        
+        const reader = new FileReader();
+        
+        reader.onload = () => {
+          try {
+            console.log('FileReader 로드 완료, 결과 길이:', reader.result.length);
+            
+            if (!reader.result || reader.result.length === 0) {
+              reject(new Error('파일 읽기 결과가 비어있습니다.'));
+              return;
+            }
+            
+            // data: URL 형식 검증
+            if (!reader.result.startsWith('data:')) {
+              reject(new Error('잘못된 파일 형식입니다.'));
+              return;
+            }
+            
+            const base64 = reader.result.split(',')[1]; // "data:application/pdf;base64," 부분 제거
+            
+            if (!base64 || base64.length === 0) {
+              reject(new Error('Base64 데이터 추출 실패'));
+              return;
+            }
+            
+            // Base64 데이터 유효성 검증 (기본적인 패턴 확인)
+            if (base64.length < 100) {
+              reject(new Error('Base64 데이터가 너무 짧습니다.'));
+              return;
+            }
+            
+            console.log('Base64 데이터 추출 완료, 길이:', base64.length);
+            console.log('Base64 데이터 샘플 (처음 100자):', base64.substring(0, 100));
+            console.log('Base64 데이터 샘플 (마지막 100자):', base64.substring(base64.length - 100));
+            
+            // 반복되는 문자 패턴 확인
+            const firstChar = base64[0];
+            const lastChar = base64[base64.length - 1];
+            const middleChar = base64[Math.floor(base64.length / 2)];
+            
+            console.log('Base64 데이터 문자 분포 확인:', {
+              첫글자: firstChar,
+              중간글자: middleChar,
+              마지막글자: lastChar,
+              전체길이: base64.length
+            });
+            
+            resolve(base64);
+          } catch (error) {
+            console.error('Base64 변환 중 오류:', error);
+            reject(new Error('Base64 변환 실패: ' + error.message));
+          }
+        };
+        
+        reader.onerror = () => {
+          console.error('FileReader 오류:', reader.error);
+          reject(new Error('파일 읽기 실패: ' + reader.error));
+        };
+        
+        reader.onabort = () => {
+          console.error('FileReader 중단됨');
+          reject(new Error('파일 읽기가 중단되었습니다.'));
+        };
+        
+        // 파일을 ArrayBuffer로 읽기 (더 안정적)
+        try {
+          reader.readAsDataURL(file);
+        } catch (error) {
+          console.error('FileReader 시작 실패:', error);
+          reject(new Error('파일 읽기 시작 실패: ' + error.message));
+        }
+      });
+    }
+    
+    // 대체 Base64 변환 함수 (ArrayBuffer 사용)
+    function convertFileToBase64Alternative(file) {
+      return new Promise((resolve, reject) => {
+        console.log('대체 Base64 변환 시작:', file.name);
+        
+        const reader = new FileReader();
+        
+        reader.onload = () => {
+          try {
+            const arrayBuffer = reader.result;
+            const bytes = new Uint8Array(arrayBuffer);
+            
+            console.log('ArrayBuffer 읽기 완료, 바이트 수:', bytes.length);
+            
+            // 바이트를 Base64로 변환
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) {
+              binary += String.fromCharCode(bytes[i]);
+            }
+            
+            const base64 = btoa(binary);
+            console.log('대체 방법으로 Base64 변환 완료, 길이:', base64.length);
+            
+            resolve(base64);
+          } catch (error) {
+            console.error('대체 Base64 변환 실패:', error);
+            reject(error);
+          }
+        };
+        
+        reader.onerror = () => reject(new Error('파일 읽기 실패'));
+        reader.readAsArrayBuffer(file);
+      });
+    }
+    
     // 탭 전환
     function showTab(tabName, event) {
+      console.log('탭 전환:', tabName, 'event:', event);
+      
       // 모든 탭 비활성화
       document.querySelectorAll('.admin-nav-tab').forEach(tab => {
         tab.classList.remove('active');
@@ -748,12 +957,15 @@
       
       // 관리 탭일 때 목록 새로고침
       if (tabName === 'manage') {
+        console.log('관리 탭 활성화, 목록 새로고침 시작');
         loadAnnouncementsList();
       }
+      
+      console.log('탭 전환 완료:', tabName);
     }
     
     // 공지사항 저장 (Firebase)
-    async function saveAnnouncement() {
+    async function saveAnnouncements() {
       const form = document.getElementById('announcementForm');
       const formData = new FormData(form);
       
@@ -764,6 +976,89 @@
       }
       
       try {
+        // 파일 정보 수집 및 업로드
+        const fileInput = document.getElementById('announcementFiles');
+        let files = [];
+        
+        console.log('파일 입력 필드:', fileInput);
+        console.log('선택된 파일들:', fileInput ? fileInput.files : 'fileInput 없음');
+        
+        if (fileInput && fileInput.files.length > 0) {
+          try {
+            // 파일들을 Base64로 변환하여 Firestore에 저장
+            const filePromises = Array.from(fileInput.files).map(async (file) => {
+              try {
+                console.log('파일 처리 시작:', file.name, '크기:', formatFileSize(file.size));
+                
+                // 파일 크기 제한 (500KB)
+                if (file.size > 500 * 1024) {
+                  throw new Error(`파일 크기가 너무 큽니다: ${formatFileSize(file.size)} (최대 500KB)`);
+                }
+                
+                // 파일을 Base64로 변환 (첫 번째 방법)
+                let base64Data;
+                console.log('=== 파일 처리 시작 ===');
+                console.log('파일 정보:', {
+                  name: file.name,
+                  size: file.size,
+                  type: file.type,
+                  lastModified: file.lastModified
+                });
+                
+                try {
+                  console.log('첫 번째 방법 시도 중...');
+                  base64Data = await convertFileToBase64(file);
+                  console.log('✅ 첫 번째 방법으로 Base64 변환 완료:', file.name);
+                  console.log('Base64 데이터 길이:', base64Data.length);
+                  console.log('Base64 데이터 샘플 (처음 50자):', base64Data.substring(0, 50));
+                } catch (error) {
+                  console.log('❌ 첫 번째 방법 실패:', error.message);
+                  console.log('대체 방법 시도 중...');
+                  try {
+                    base64Data = await convertFileToBase64Alternative(file);
+                    console.log('✅ 대체 방법으로 Base64 변환 완료:', file.name);
+                    console.log('Base64 데이터 길이:', base64Data.length);
+                    console.log('Base64 데이터 샘플 (처음 50자):', base64Data.substring(0, 50));
+                  } catch (alternativeError) {
+                    console.error('❌ 대체 방법도 실패:', alternativeError.message);
+                    throw new Error(`모든 Base64 변환 방법 실패: ${error.message}, ${alternativeError.message}`);
+                  }
+                }
+                
+                console.log('=== 파일 처리 완료 ===');
+                
+                return {
+                  name: file.name,
+                  size: file.size,
+                  type: file.type,
+                  lastModified: file.lastModified,
+                  data: base64Data, // Base64 데이터
+                  isBase64: true
+                };
+              } catch (fileError) {
+                console.error(`파일 ${file.name} 처리 실패:`, fileError);
+                throw new Error(`파일 "${file.name}" 처리 실패: ${fileError.message}`);
+              }
+            });
+            
+            files = await Promise.all(filePromises);
+            console.log('모든 파일 처리 완료:', files.length, '개');
+            console.log('파일 데이터 샘플:', files[0] ? {
+              name: files[0].name,
+              size: files[0].size,
+              hasData: !!files[0].data,
+              dataLength: files[0].data ? files[0].data.length : 0,
+              isBase64: files[0].isBase64
+            } : '파일 없음');
+          } catch (uploadError) {
+            console.error('파일 처리 실패:', uploadError);
+            alert(`파일 처리 중 오류가 발생했습니다:\n\n${uploadError.message}\n\n파일 크기를 500KB 이하로 줄여보세요.`);
+            return;
+          }
+        } else {
+          console.log('선택된 파일이 없습니다.');
+        }
+        
         // 새 공지사항 생성
         const newAnnouncement = {
           title: formData.get('title'),
@@ -771,12 +1066,49 @@
           priority: formData.get('priority') || 'normal',
           date: formData.get('date') || new Date().toISOString().split('T')[0],
           tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+          files: files,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         };
         
+        console.log('=== 저장할 공지사항 데이터 ===');
+        console.log('제목:', newAnnouncement.title);
+        console.log('파일 수:', newAnnouncement.files.length);
+        
+        newAnnouncement.files.forEach((file, index) => {
+          console.log(`파일 ${index + 1}:`, {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            hasData: !!file.data,
+            dataLength: file.data ? file.data.length : 0,
+            isBase64: file.isBase64,
+            dataSample: file.data ? file.data.substring(0, 100) : '데이터 없음'
+          });
+        });
+        
         // Firebase에 저장
         const docRef = await addDoc(collection(db, "announcements"), newAnnouncement);
+        
+        console.log('Firestore 저장 완료, 문서 ID:', docRef.id);
+        
+        // 저장된 데이터 확인
+        const savedDoc = await getDoc(docRef);
+        if (savedDoc.exists()) {
+          const savedData = savedDoc.data();
+          console.log('저장된 공지사항 데이터:', {
+            id: savedDoc.id,
+            title: savedData.title,
+            filesCount: savedData.files ? savedData.files.length : 0,
+            filesData: savedData.files ? savedData.files.map(f => ({
+              name: f.name,
+              size: f.size,
+              hasData: !!f.data,
+              dataLength: f.data ? f.data.length : 0,
+              isBase64: f.isBase64
+            })) : []
+          });
+        }
         
         // 성공 메시지
         alert('공지사항이 Firebase에 성공적으로 저장되었습니다!');
@@ -797,7 +1129,26 @@
     function resetForm() {
       document.getElementById('announcementForm').reset();
       document.getElementById('announcementDate').value = new Date().toISOString().split('T')[0];
-      document.querySelector('.file-info').textContent = '선택된 파일 없음';
+      
+      // 파일 입력 필드 초기화
+      const fileInput = document.getElementById('announcementFiles');
+      if (fileInput) {
+        fileInput.value = '';
+        console.log('파일 입력 필드 초기화됨');
+      }
+      
+      const fileInfo = document.querySelector('.file-info');
+      if (fileInfo) {
+        fileInfo.textContent = '파일을 클릭하거나 드래그하여 선택하세요';
+        console.log('파일 정보 텍스트 초기화됨');
+      }
+      
+      // 버튼을 등록 모드로 초기화
+      const submitButton = document.querySelector('.submit-button');
+      if (submitButton) {
+        submitButton.textContent = '저장';
+        submitButton.onclick = saveAnnouncements;
+      }
     }
     
     // 공지사항 목록 로드 (Firebase)
@@ -815,6 +1166,7 @@
               <p>등록된 공지사항이 없습니다.</p>
             </div>
           `;
+          console.log('등록된 공지사항이 없습니다.');
           return;
         }
         
@@ -842,6 +1194,8 @@
             </div>
           </div>
         `).join('');
+        
+        console.log('공지사항 목록 로드 완료:', announcements.length, '개');
         
       } catch (error) {
         console.error("Firebase 목록 로드 실패:", error);
@@ -873,6 +1227,16 @@
           document.getElementById('announcementDate').value = announcement.date;
           document.getElementById('announcementTags').value = announcement.tags.join(', ');
           
+          // 기존 파일 정보 표시
+          if (announcement.files && announcement.files.length > 0) {
+            const fileInfo = document.querySelector('.file-info');
+            if (fileInfo) {
+              const fileNames = announcement.files.map(file => file.name).join(', ');
+              const totalSize = announcement.files.reduce((total, file) => total + (file.size || 0), 0);
+              fileInfo.textContent = `기존 파일: ${fileNames} (총 ${formatFileSize(totalSize)})`;
+            }
+          }
+          
           // 수정 모드로 변경
           document.querySelector('.submit-button').textContent = '수정';
           document.querySelector('.submit-button').onclick = () => updateAnnouncement(id);
@@ -899,16 +1263,67 @@
       }
       
       try {
+        // 파일 정보 수집 및 업로드
+        const fileInput = document.getElementById('announcementFiles');
+        let files = [];
+        
+        if (fileInput && fileInput.files.length > 0) {
+          try {
+            // 파일들을 Base64로 변환
+            const filePromises = Array.from(fileInput.files).map(async (file) => {
+              try {
+                console.log('파일 처리 시작:', file.name, '크기:', formatFileSize(file.size));
+                
+                // 파일 크기 제한 (500KB)
+                if (file.size > 500 * 1024) {
+                  throw new Error(`파일 크기가 너무 큽니다: ${formatFileSize(file.size)} (최대 500KB)`);
+                }
+                
+                // 파일을 Base64로 변환
+                const base64Data = await convertFileToBase64(file);
+                
+                console.log('파일 Base64 변환 완료:', file.name);
+                
+                return {
+                  name: file.name,
+                  size: file.size,
+                  type: file.type,
+                  lastModified: file.lastModified,
+                  data: base64Data, // Base64 데이터
+                  isBase64: true
+                };
+              } catch (fileError) {
+                console.error(`파일 ${file.name} 처리 실패:`, fileError);
+                throw new Error(`파일 "${file.name}" 처리 실패: ${fileError.message}`);
+              }
+            });
+            
+            files = await Promise.all(filePromises);
+            console.log('모든 파일 처리 완료:', files.length, '개');
+          } catch (uploadError) {
+            console.error('파일 처리 실패:', uploadError);
+            alert(`파일 처리 중 오류가 발생했습니다:\n\n${uploadError.message}\n\n파일 크기를 500KB 이하로 줄여보세요.`);
+            return;
+          }
+        }
+        
         // Firebase에서 공지사항 업데이트
         const docRef = doc(db, "announcements", id);
-        await updateDoc(docRef, {
+        const updateData = {
           title: formData.get('title'),
           content: formData.get('content'),
           priority: formData.get('priority') || 'normal',
           date: formData.get('date') || new Date().toISOString().split('T')[0],
           tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag) : [],
           updatedAt: serverTimestamp()
-        });
+        };
+        
+        // 파일이 새로 업로드된 경우에만 files 필드 업데이트
+        if (files.length > 0) {
+          updateData.files = files;
+        }
+        
+        await updateDoc(docRef, updateData);
         
         // 성공 메시지
         alert('공지사항이 Firebase에 성공적으로 수정되었습니다!');
@@ -916,7 +1331,7 @@
         // 폼 초기화 및 등록 모드로 복귀
         resetForm();
         document.querySelector('.submit-button').textContent = '저장';
-        document.querySelector('.submit-button').onclick = saveAnnouncement;
+        document.querySelector('.submit-button').onclick = saveAnnouncements;
         
         // 관리 탭으로 이동
         showTab('manage', null);
@@ -935,7 +1350,10 @@
           await deleteDoc(doc(db, "announcements", id));
           
           alert('공지사항이 Firebase에서 삭제되었습니다.');
-          loadAnnouncementsList();
+          
+          // 현재 관리 탭에 머물면서 목록만 새로고침
+          console.log('공지사항 삭제 완료, 관리 탭에서 목록 새로고침');
+          await loadAnnouncementsList();
           
         } catch (error) {
           console.error("Firebase 삭제 실패:", error);

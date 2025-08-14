@@ -1,113 +1,76 @@
-# SmartCore Solution - 헬스케어 & 스마트제조 SaaS
+# SmartCoreSolution Homepage
 
-AI 음성인식 기반 헬스케어 및 스마트제조 SaaS 솔루션을 제공하는 스마트코어솔루션의 공식 웹사이트입니다.
+스마트코어솔루션의 공식 홈페이지입니다. AI 기반 헬스케어 및 스마트제조 솔루션을 제공하는 회사의 웹사이트로, 공지사항 관리, 문의하기, 서비스 소개 등의 기능을 포함합니다.
 
-## 🚀 프로젝트 개요
+## 🚀 주요 기능
 
-스마트코어솔루션(주)는 첨단 음성인식과 인공지능(AI) 분석을 기반으로, 헬스케어와 스마트제조 전반에 걸친 혁신적인 SaaS 솔루션을 제공합니다.
+### 📢 공지사항 관리 시스템
+- **관리자 페이지**: 공지사항 등록, 수정, 삭제 기능
+- **파일 첨부**: 최대 500KB 파일 업로드 지원 (Base64 인코딩)
+- **실시간 표시**: 메인 페이지에 최신 공지사항 자동 표시
+- **모달 팝업**: 제목 클릭 시 전체 내용 및 첨부파일 다운로드
+- **최신순 정렬**: 등록일 기준 내림차순 정렬
+- **표시 제한**: 최대 6개 공지사항 표시, "더 보기" 기능
 
-### 핵심 역량
-- AI 기반 음성·언어 분석
-- 의료·제조 용어 인식
-- 클라우드 SaaS 아키텍처
-- HIPAA / GDPR 대응
+### 📧 문의하기 시스템
+- **AJAX 폼 제출**: SPA 안전한 비동기 전송
+- **FormSubmit 연동**: 무료 폼 처리 서비스
+- **대안 전송**: 서비스 장애 시 이메일 앱 자동 실행
+- **모바일 최적화**: 터치 친화적 UI 및 iOS 호환성
+- **실시간 검증**: 클라이언트 사이드 폼 검증
 
-## 🏥 헬스케어 서비스
+### 🏥 헬스케어 서비스
+- **정신 건강·인지 기능 진단**: AI 기반 진단 솔루션
+- **의료 기록 자동화**: EMR 시스템 최적화
+- **재활 치료·의료 통역**: 다국어 의료 서비스
 
-### 1. 정신 건강·인지 기능 진단
-- 발화 속도·억양·어휘·침묵 패턴을 AI로 분석
-- 치매, 우울증 등 조기 징후 탐지·예측
-- 병원, 요양원, 재활센터 등 다양한 환경에서 활용
+### 🏭 스마트제조 솔루션
+- **제조 공정 최적화**: AI 기반 생산성 향상
+- **품질 관리**: 실시간 모니터링 및 예측 분석
+- **자동화 시스템**: IoT 및 센서 기반 스마트 팩토리
 
-### 2. 의료 기록 자동화 (EMR)
-- 진료 내용을 음성으로 입력하면 의료 전문 용어를 정확히 인식
-- EMR에 자동 저장하여 의사의 업무 부담 감소
-- 오류 가능성 최소화
+### 📱 PWA (Progressive Web App)
+- **오프라인 지원**: 서비스 워커를 통한 캐싱
+- **앱 설치**: 모바일에서 홈 화면에 추가 가능
+- **반응형 디자인**: 모든 디바이스에서 최적화된 경험
 
-### 3. 재활 치료·의료 통역
-- 언어 재활(발음 교정, 진행 분석) 지원
-- 다국적 환자를 위한 실시간 의료 통역
-- 원격 화상 진료, 국제 의료 봉사 환경에서 활용
-
-## 🏭 스마트제조 솔루션
-
-- IoT·AI·MES로 생산 현황, 품질 데이터, 설비·안전 상태를 실시간 모니터링
-- 생산성 향상, 품질관리 자동화, 실시간 모니터링, 안전관리 강화 지원
-
-## 🛠️ 기술 스택
+## 🛠 기술 스택
 
 ### Frontend
-- HTML5
-- CSS3
-- JavaScript (ES6+)
-- PWA (Progressive Web App) 지원
+- **HTML5**: 시맨틱 마크업 및 최신 웹 표준
+- **CSS3**: Flexbox, Grid, CSS 변수, 미디어 쿼리
+- **JavaScript (ES6+)**: Async/Await, Fetch API, DOM 조작
+- **PWA**: Service Worker, Web App Manifest
 
 ### Backend & Database
-- Firebase Firestore (실시간 데이터베이스)
-- Firebase Authentication (사용자 인증)
-- Local Storage (클라이언트 사이드 캐싱)
+- **Firebase Firestore**: NoSQL 데이터베이스
+- **Firebase Hosting**: 정적 웹사이트 호스팅
+- **FormSubmit.co**: 무료 폼 처리 서비스
 
-### 주요 라이브러리
-- Firebase SDK v10.7.1
+### 파일 처리
+- **Base64 인코딩**: 파일 데이터 직접 저장
+- **Blob API**: 파일 다운로드 처리
+- **Drag & Drop**: 파일 업로드 사용자 경험 향상
 
 ## 📁 프로젝트 구조
 
 ```
-homepage_test/
-├── index.html                 # 메인 페이지
-├── admin-announcements.html   # 공지사항 관리 페이지
-├── announcement-form.html     # 공지사항 등록 폼
-├── healthcare.html            # 헬스케어 서비스 소개
-├── healthcare-diagnosis.html  # 정신 건강 진단 서비스
-├── healthcare-emr.html        # 의료 기록 자동화 서비스
-├── healthcare-rehab.html      # 재활 치료 서비스
-├── manufacturing.html         # 스마트제조 솔루션
-├── smart-manufacturing.html   # 스마트제조 상세 페이지
-├── contact.html              # 문의 페이지
-├── inquiry-status.html       # 문의 상태 확인
-├── mail-send.html           # 메일 발송 페이지
-├── thank_you.html           # 감사 페이지
-├── styles.css                # 메인 스타일시트
-├── smart-manufacturing.css   # 스마트제조 전용 스타일
-├── admin-styles.css          # 관리자 페이지 스타일
-├── app.js                    # 메인 JavaScript 파일
-├── admin.js                  # 관리자 페이지 JavaScript
-├── manifest.webmanifest      # PWA 매니페스트
-├── service-worker.js         # 서비스 워커
-├── create_service_icons.py   # 서비스 아이콘 생성 스크립트
-├── assets/                   # 이미지 및 아이콘
-│   ├── icons/
-│   ├── images/
-│   └── *.png, *.webp 파일들
-└── icons/                    # PWA 아이콘
-    ├── icon-192.png
-    ├── icon-512.png
-    └── maskable 아이콘들
-```
-
-## 🔐 공지사항 관리 시스템
-
-### 기능
-- **공지사항 등록**: 제목, 내용, 우선순위, 날짜, 태그, 첨부파일
-- **공지사항 관리**: 목록 조회, 수정, 삭제
-- **실시간 데이터베이스**: Firebase Firestore 연동
-- **관리자 인증**: 세션 기반 인증 시스템
-
-### 관리자 계정
-- **ID**: ``
-- **Password**: ``
-
-### 데이터 구조
-```javascript
-{
-  title: "공지사항 제목",
-  content: "공지사항 내용",
-  priority: "normal|high|urgent",
-  date: "2025-01-20",
-  tags: ["태그1", "태그2"],
-  createdAt: "서버 타임스탬프",
-  updatedAt: "서버 타임스탬프"
-}
+homepage-main/
+├── 📄 index.html                 # 메인 홈페이지 (공지사항 표시)
+├── 📄 admin-announcements.html   # 공지사항 관리자 페이지
+├── 📄 contact.html               # 문의하기 페이지
+├── 📄 healthcare.html            # 헬스케어 서비스 소개
+├── 📄 manufacturing.html         # 스마트제조 서비스 소개
+├── 📄 thank_you.html            # 문의 완료 감사 페이지
+├── 📄 app.js                     # 공통 JavaScript (PWA, 새로고침)
+├── 📄 styles.css                 # 전역 스타일시트
+├── 📄 service-worker.js          # PWA 서비스 워커
+├── 📄 manifest.webmanifest       # PWA 매니페스트
+├── 📁 assets/                    # 이미지 및 아이콘
+│   ├── icons/                    # SVG 아이콘들
+│   └── *.png, *.webp            # 서비스 이미지들
+├── 📁 images/                    # 추가 이미지 리소스
+└── 📁 icons/                     # PWA 아이콘들
 ```
 
 ## 🚀 설치 및 실행
@@ -115,146 +78,199 @@ homepage_test/
 ### 1. 저장소 클론
 ```bash
 git clone [repository-url]
-cd homepage_test
+cd homepage-main
 ```
 
-### 2. Firebase 설정
-1. [Firebase Console](https://console.firebase.google.com/)에서 새 프로젝트 생성
-2. Firestore Database 생성 (테스트 모드)
-3. 웹 앱 등록 및 설정 정보 복사
-4. `admin-announcements.html`의 Firebase 설정 업데이트
-
-### 3. 로컬 서버 실행
+### 2. 로컬 서버 실행
 ```bash
-# Live Server (VS Code 확장)
-# 또는 Python 내장 서버
+# Python 3
 python -m http.server 8000
 
-# 또는 Node.js http-server
-npx http-server
+# Node.js
+npx serve .
+
+# Live Server (VS Code 확장)
+# index.html 우클릭 → "Open with Live Server"
 ```
 
-### 4. 브라우저에서 접속
+### 3. 브라우저에서 접속
 ```
 http://localhost:8000
 ```
 
-## 🔧 Firebase 설정
+## ⚙️ 설정
 
-### 1. 프로젝트 생성
-- Firebase Console에서 새 프로젝트 생성
-- 프로젝트 이름: `smartcore-announcements`
+### Firebase 설정
+1. **Firebase 프로젝트 생성**
+2. **Firestore Database 활성화**
+3. **웹 앱 추가 및 설정**
+4. **config 객체를 `admin-announcements.html`에 추가**
 
-### 2. 웹 앱 등록
-- 웹 앱 추가: `smartcore-web`
-- Firebase SDK 설정 코드 복사
-
-### 3. Firestore Database 설정
-- Firestore Database 생성
-- 보안 규칙 설정 (테스트 모드)
-- 위치: `asia-northeast3 (서울)` 권장
-
-### 4. 보안 규칙 (테스트용)
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
-    }
-  }
-}
-```
-
-### 5. Firebase 설정 코드 예시
 ```javascript
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "your-api-key",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "your-sender-id",
+  appId: "your-app-id"
 };
 ```
 
-## 📱 PWA 기능
+### FormSubmit 설정
+1. **FormSubmit.co 접속**
+2. **이메일 주소 입력**: `jangck11@smartcoresolution.com`
+3. **활성화 이메일 확인**
+4. **"Activate your form" 링크 클릭**
 
-- **오프라인 지원**: 서비스 워커를 통한 캐싱
-- **앱 설치**: Chrome/Edge/Android에서 홈 화면에 추가 가능
-- **반응형 디자인**: 모바일, 태블릿, 데스크톱 지원
-- **매니페스트**: 앱 아이콘, 테마 색상, 표시 모드 설정
+## 📱 모바일 최적화
 
-## 🌐 배포
+### 반응형 디자인
+- **모바일 우선 접근법**: 768px 이하 최적화
+- **터치 타겟**: 최소 44px 터치 영역
+- **iOS 호환성**: 줌 방지 및 안전 영역 지원
 
-### GitHub Pages
-1. 저장소를 GitHub에 푸시
-2. Settings → Pages → Source를 `main` 브랜치로 설정
-3. 자동 배포 완료
+### PWA 기능
+- **오프라인 지원**: 서비스 워커 캐싱
+- **앱 설치**: 홈 화면 추가 지원
+- **푸시 알림**: 향후 구현 예정
 
-### Firebase Hosting (선택사항)
-```bash
-npm install -g firebase-tools
-firebase login
-firebase init hosting
-firebase deploy
+## 🔧 주요 기능 상세
+
+### 공지사항 시스템
+```javascript
+// Firebase에서 공지사항 로드
+async function loadAnnouncements() {
+  const querySnapshot = await getDocs(collection(db, "announcements"));
+  const announcements = querySnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+  
+  // 최신순 정렬 및 6개 제한
+  return announcements
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .slice(0, 6);
+}
 ```
+
+### 파일 업로드 시스템
+```javascript
+// Base64 인코딩으로 파일 저장
+async function convertFileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(',')[1];
+      resolve(base64);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+```
+
+### 문의하기 시스템
+```javascript
+// FormSubmit 실패 시 대안 방법
+if (responseText.includes('activation')) {
+  const mailtoLink = `mailto:jangck11@smartcoresolution.com?subject=${emailSubject}&body=${emailBody}`;
+  window.location.href = mailtoLink;
+}
+```
+
+## 🐛 문제 해결
+
+### 일반적인 문제들
+
+#### 1. Firebase 연결 오류
+- **증상**: "Firebase is not defined" 오류
+- **해결**: Firebase SDK 스크립트가 올바르게 로드되었는지 확인
+
+#### 2. 파일 업로드 실패
+- **증상**: 파일이 저장되지 않음
+- **해결**: 파일 크기 제한(500KB) 확인, Base64 변환 로그 확인
+
+#### 3. FormSubmit 활성화 필요
+- **증상**: "This form needs activation" 메시지
+- **해결**: 이메일로 전송된 활성화 링크 클릭
+
+#### 4. 모바일에서 문의 전송 실패
+- **증상**: "전송상태를 확인하지 못했습니다" 메시지
+- **해결**: 대안 전송 시스템이 자동으로 이메일 앱 실행
+
+## 📈 성능 최적화
+
+### 이미지 최적화
+- **WebP 포맷**: 최신 브라우저 지원
+- **PNG 폴백**: 구형 브라우저 호환성
+- **적응형 이미지**: 디바이스별 최적 크기
+
+### 코드 최적화
+- **비동기 로딩**: Firebase SDK 비동기 초기화
+- **지연 로딩**: 필요 시에만 리소스 로드
+- **캐싱 전략**: 서비스 워커를 통한 정적 리소스 캐싱
 
 ## 🔒 보안 고려사항
 
-### 현재 상태 (개발용)
-- Firebase 보안 규칙이 모든 접근을 허용
-- 관리자 인증이 클라이언트 사이드에서만 처리
-- 세션 기반 인증 (sessionStorage 사용)
+### 클라이언트 사이드 보안
+- **입력 검증**: HTML5 및 JavaScript 폼 검증
+- **XSS 방지**: 사용자 입력 데이터 이스케이프
+- **CSRF 보호**: FormSubmit 서비스의 내장 보안
 
-### 운영 환경 권장사항
-- Firebase 보안 규칙 강화
-- 서버 사이드 인증 구현
-- HTTPS 강제 적용
-- API 키 보안 관리
-- JWT 토큰 기반 인증
+### 데이터 보안
+- **Firebase 보안 규칙**: Firestore 접근 제어
+- **파일 크기 제한**: 업로드 파일 크기 제한
+- **파일 타입 검증**: 허용된 파일 형식만 업로드
+
+## 🚀 배포
+
+### GitHub Pages
+1. **저장소 설정** → Pages
+2. **Source**: Deploy from a branch
+3. **Branch**: main, folder: / (root)
+4. **자동 배포**: main 브랜치 푸시 시 자동 배포
+
+### Firebase Hosting
+```bash
+# Firebase CLI 설치
+npm install -g firebase-tools
+
+# 로그인 및 프로젝트 선택
+firebase login
+firebase use your-project-id
+
+# 배포
+firebase deploy
+```
+
+## 🤝 기여하기
+
+### 개발 환경 설정
+1. **코드 포크**
+2. **기능 브랜치 생성**
+3. **변경사항 커밋**
+4. **Pull Request 생성**
+
+### 코딩 스타일
+- **HTML**: 시맨틱 마크업, 접근성 고려
+- **CSS**: BEM 방법론, CSS 변수 활용
+- **JavaScript**: ES6+ 문법, async/await 사용
 
 ## 📞 지원 및 문의
 
-- **회사**: 스마트코어솔루션(주)
-- **웹사이트**: [공식 웹사이트](https://www.smartcoresolution.com)
-- **문의**: `/contact.html` 페이지를 통한 문의
-- **문의 상태 확인**: `/inquiry-status.html`
+### 기술 지원
+- **이메일**: jangck11@smartcoresolution.com
+- **문의 페이지**: `/contact.html`
+
+### 버그 리포트
+- **GitHub Issues**: 프로젝트 저장소에 이슈 등록
+- **상세 정보**: 오류 메시지, 브라우저 정보, 단계별 재현 방법
 
 ## 📄 라이선스
 
-© 2025 SmartCoreSolution, Inc. All rights reserved.
-
-## 🔄 업데이트 로그
-
-### v1.0.0 (2025-01-20)
-- 초기 웹사이트 구축
-- 헬스케어 서비스 소개 페이지
-- 스마트제조 솔루션 소개
-- 공지사항 관리 시스템 (Firebase 연동)
-- PWA 지원 추가
-- 반응형 디자인 구현
-- 관리자 인증 시스템 구축
-
-## 🐛 알려진 이슈
-
-### Firebase 권한 오류
-- **오류**: "Missing or insufficient permissions"
-- **해결방법**: Firebase Console에서 Firestore 보안 규칙을 테스트 모드로 설정
-
-### JavaScript 오류
-- **오류**: "Cannot read properties of undefined (reading 'target')"
-- **해결방법**: showTab 함수에서 event 객체 안전 처리
-
-## 🚧 개발 중인 기능
-
-- [ ] 파일 업로드 기능 완성
-- [ ] 사용자 권한 관리 시스템
-- [ ] 실시간 알림 시스템
-- [ ] 다국어 지원
-- [ ] SEO 최적화
+이 프로젝트는 SmartCoreSolution, Inc.의 소유입니다.
 
 ---
 
-**SmartCore Solution** - AI 기반 혁신적인 SaaS 솔루션으로 더 나은 미래를 만들어갑니다.
+**© 2025 SmartCoreSolution, Inc. All rights reserved.**
 

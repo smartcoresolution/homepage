@@ -7,6 +7,10 @@
   "orientation": "portrait-primary",
   "background_color": "#0a487c",
   "theme_color": "#0a487c",
+  "display_override": ["standalone", "minimal-ui"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
   "scope": "/",
   "lang": "ko",
   "icons": [

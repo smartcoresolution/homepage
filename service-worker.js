@@ -49,6 +49,48 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   
+  // Firebase Storage 요청은 네트워크 전용 (캐시하지 않음)
+  if (request.url.includes('firebasestorage.googleapis.com')) {
+    console.log('Firebase Storage 요청 감지:', request.url);
+    
+    // CORS 헤더 추가
+    const modifiedRequest = new Request(request, {
+      mode: 'cors',
+      credentials: 'omit'
+    });
+    
+    event.respondWith(
+      fetch(modifiedRequest)
+        .then(response => {
+          console.log('Firebase Storage 응답 성공:', response.status);
+          return response;
+        })
+        .catch(error => {
+          console.error('Firebase Storage 요청 실패:', error);
+          
+          // 상세한 오류 정보 로깅
+          if (error.name === 'TypeError' && error.message.includes('CORS')) {
+            console.error('CORS 정책 위반 감지');
+          }
+          
+          // Firebase Storage 요청 실패 시 에러 응답 반환
+          return new Response(JSON.stringify({ 
+            error: 'Storage request failed',
+            details: error.message,
+            timestamp: new Date().toISOString()
+          }), {
+            status: 500,
+            statusText: 'Internal Server Error',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        })
+    );
+    return;
+  }
+  
   // 정적 자산은 캐시 우선
   if (STATIC_ASSETS.includes(request.url)) {
     event.respondWith(

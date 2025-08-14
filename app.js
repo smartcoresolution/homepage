@@ -93,10 +93,19 @@ function showAllAnnouncements() {
   // 3. 공지사항 검색 및 필터링 기능
 }
 
-// 공지사항 자동 새로고침 (선택사항)
-function refreshAnnouncements() {
-  // 서버에서 최신 공지사항을 가져오는 로직
-  console.log('공지사항 새로고침 중...');
+// 공지사항 새로고침
+async function refreshAnnouncements() {
+  try {
+    // index.html의 loadAnnouncements 함수 호출
+    if (typeof loadAnnouncements === 'function') {
+      await loadAnnouncements();
+      console.log('공지사항이 새로고침되었습니다.');
+    } else {
+      console.log('loadAnnouncements 함수를 찾을 수 없습니다.');
+    }
+  } catch (error) {
+    console.error('공지사항 새로고침 실패:', error);
+  }
 }
 
 // 페이지 로드 시 공지사항 초기화

@@ -54,6 +54,59 @@
       .grid{grid-template-columns:1fr}
       .actions{flex-direction:column; align-items:stretch}
       button{width:100%}
+      
+      /* 모바일 최적화 */
+      .container{padding:16px 12px}
+      .card{padding:20px 16px}
+      h1{font-size:24px}
+      input, select, textarea{font-size:16px} /* iOS 줌 방지 */
+      .privacy{flex-direction:column; gap:8px}
+    }
+    
+    /* 모바일 터치 최적화 */
+    @media (hover: none) and (pointer: coarse) {
+      button, .pill, input, select, textarea {
+        min-height: 44px; /* 터치 타겟 최소 크기 */
+      }
+      
+      .dropdown .menu {
+        min-width: 250px; /* 모바일에서 더 넓게 */
+      }
+      
+      /* 모바일에서 폼 제출 버튼 강조 */
+      #submitBtn {
+        font-size: 16px;
+        padding: 16px 24px;
+        background: linear-gradient(135deg, #1a3a7e 0%, #4a9eff 100%);
+        box-shadow: 0 4px 12px rgba(26, 58, 126, 0.3);
+      }
+      
+      #submitBtn:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(26, 58, 126, 0.4);
+      }
+    }
+    
+    /* 모바일에서 오류 메시지 가독성 향상 */
+    @media (max-width: 768px) {
+      .msg {
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 16px;
+        margin-top: 20px;
+      }
+      
+      .msg.err {
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #dc2626;
+      }
+      
+      .msg.ok {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+        color: #16a34a;
+      }
     }
     footer{border-top:1px solid #eef2f7; margin-top:24px; padding:16px; text-align:center; color:#6b7280; font-size:13px}
   </style>
@@ -83,7 +136,7 @@
 
   <div class="container">
     <h1>문의하기</h1>
-    <p class="desc">라우터가 폼 제출을 가로채더라도, fetch로 직접 POST 하도록 구성했습니다.</p>
+    <p class="desc">문의사항을 작성하시면 FormSubmit 서비스를 통해 전송됩니다. 서비스 활성화 중인 경우 이메일 앱을 통해 대안 전송이 제공됩니다.</p>
 
     <div class="card">
       <!-- ✅ AJAX 제출 (SPA 안전) -->
@@ -147,6 +200,12 @@
         </div>
 
         <div id="msg" class="msg" role="status" aria-live="polite"></div>
+        
+        <!-- 대안 전송 방법 안내 -->
+        <div class="alternative-method" style="margin-top: 20px; padding: 16px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; font-size: 14px; color: #0369a1;">
+          <strong>💡 대안 전송 방법</strong><br>
+          FormSubmit 서비스가 일시적으로 사용 불가능한 경우, 이메일 앱을 통해 문의사항을 전송할 수 있습니다.
+        </div>
       </form>
     </div>
   </div>
@@ -202,26 +261,121 @@
         const data = Object.fromEntries(new FormData(form).entries());
 
         btn.disabled = true;
-        show('ok', '전송 중입니다…');
+        btn.textContent = '전송 중...';
+        show('ok', '문의사항을 전송하고 있습니다. 잠시만 기다려주세요...');
         try {
-          const res = await fetch('https://formsubmit.co/ajax/jangck11@smartcoresolution.com', {
+          console.log('문의사항 전송 시작:', data);
+          
+          // FormSubmit 서비스로 전송 시도
+          let res = await fetch('https://formsubmit.co/ajax/jangck11@smartcoresolution.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify(data)
           });
-          if (!res.ok) throw new Error('Network error');
+          
+          // FormSubmit 실패 시 대안 방법 시도
+          if (!res.ok || res.status >= 400) {
+            console.log('FormSubmit 실패, 대안 방법 시도...');
+            
+            // 응답 텍스트 확인
+            let responseText = '';
+            try {
+              responseText = await res.text();
+              console.log('FormSubmit 응답 텍스트:', responseText);
+            } catch (e) {
+              console.log('응답 텍스트 읽기 실패:', e);
+            }
+            
+            // "activation needed" 오류인 경우 대안 방법 사용
+            if (responseText.includes('activation') || responseText.includes('activate')) {
+              console.log('FormSubmit 활성화 필요, 대안 방법 사용');
+              
+              // 이메일 링크로 대체 (mailto:)
+              const emailSubject = encodeURIComponent(`[문의] ${data.subject || '스마트코어솔루션 문의'}`);
+              const emailBody = encodeURIComponent(`
+문의자: ${data.name}
+이메일: ${data.email}
+연락처: ${data.phone || '없음'}
+문의유형: ${data.inquiry_type}
+제목: ${data.subject}
+내용: ${data.message}
+              `);
+              
+              const mailtoLink = `mailto:jangck11@smartcoresolution.com?subject=${emailSubject}&body=${emailBody}`;
+              
+              // 사용자에게 대안 방법 안내
+              show('ok', 'FormSubmit 서비스가 아직 활성화되지 않았습니다. 이메일 앱을 통해 문의사항을 보내드리겠습니다.');
+              
+              setTimeout(() => {
+                window.location.href = mailtoLink;
+              }, 2000);
+              
+              return;
+            }
+            
+            // 기타 오류의 경우 일반적인 대안 방법
+            show('err', `FormSubmit 서비스 오류 (${res.status}). 잠시 후 다시 시도해주세요.`);
+            return;
+          }
+          
+          console.log('응답 상태:', res.status, res.statusText);
+          console.log('응답 헤더:', Object.fromEntries(res.headers.entries()));
+          
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+          }
+          
           const json = await res.json();
-          if (json && json.success === 'true') {
-            // 성공 → 감사 페이지로 이동
-            location.assign('/thank_you.html'); // 배포 경로에 맞게 수정
+          console.log('응답 데이터:', json);
+          
+          // FormSubmit 응답 처리 개선
+          if (json) {
+            console.log('FormSubmit 응답 상세:', json);
+            
+            // 다양한 성공 응답 형태 처리
+            if (json.success === 'true' || json.success === true || json.status === 'success') {
+              show('ok', '문의사항이 성공적으로 전송되었습니다!');
+              setTimeout(() => {
+                location.assign('/thank_you.html');
+              }, 2000);
+            } else if (json.message) {
+              // 서버에서 오류 메시지를 보낸 경우
+              show('err', `전송 실패: ${json.message}`);
+            } else {
+              // 응답은 있지만 성공/실패 상태가 명확하지 않은 경우
+              console.warn('응답 상태가 명확하지 않음:', json);
+              show('ok', '문의사항이 전송되었습니다. 확인 후 연락드리겠습니다.');
+              setTimeout(() => {
+                location.assign('/thank_you.html');
+              }, 2000);
+            }
           } else {
-            show('err', '전송 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+            // 응답 데이터가 없는 경우
+            console.error('FormSubmit 응답 데이터 없음');
+            show('err', '서버 응답을 받지 못했습니다. 잠시 후 다시 시도해주세요.');
           }
         } catch (err) {
-          console.error(err);
-          show('err', '전송 실패. 네트워크 상태 확인 후 다시 시도해 주세요.');
+          console.error('문의사항 전송 오류:', err);
+          
+          // 구체적인 오류 메시지 제공
+          let errorMessage = '전송 실패';
+          
+          if (err.name === 'TypeError' && err.message.includes('fetch')) {
+            errorMessage = '네트워크 연결을 확인해주세요.';
+          } else if (err.name === 'SyntaxError') {
+            errorMessage = '서버 응답을 처리할 수 없습니다.';
+          } else if (err.message.includes('Failed to fetch')) {
+            errorMessage = '인터넷 연결을 확인해주세요.';
+          } else if (err.message.includes('NetworkError')) {
+            errorMessage = '네트워크 오류가 발생했습니다.';
+          } else {
+            errorMessage = `전송 실패: ${err.message}`;
+          }
+          
+          show('err', errorMessage);
         } finally {
           btn.disabled = false;
+          btn.textContent = '보내기';
         }
       });
     })();

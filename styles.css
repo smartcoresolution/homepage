@@ -603,10 +603,11 @@ nav {
   background: var(--card-bg);
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .announcement-card:hover {
@@ -654,16 +655,14 @@ nav {
 }
 
 .announcement-card h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 12px 0;
   font-size: 16px;
   color: var(--text);
+  font-weight: 600;
 }
 
 .announcement-card p {
-  margin: 0 0 12px 0;
-  line-height: 1.6;
-  color: var(--text);
-  opacity: 0.9;
+  display: none; /* 내용 숨김 - 제목만 표시 */
 }
 
 .announcement-tags {
